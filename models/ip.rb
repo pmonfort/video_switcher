@@ -1,7 +1,10 @@
 require 'rubygems'
 require 'sequel'
 
-DB = Sequel.connect(:adapter => 'mysql2', :user => 'root', :host => 'localhost', :database => 'qr',:password=>'3578')
+USER = 'root'
+PASSWORD = 'root'
+
+DB = Sequel.connect(:adapter => 'mysql2', :user => USER, :host => 'localhost', :database => 'qr',:password => PASSWORD)
 
 # create an items table
 DB.create_table? :ips do
