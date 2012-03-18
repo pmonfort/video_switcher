@@ -30,11 +30,12 @@ end
 
 post '/admin/ips/add' do
   protected!
-  ip_from = params[:ip_from]
-  ip_to = params[:ip_to]
-  country = params[:country]
-  video = params[:video]
-  @ip = Ip.insert(:ip_from => ip_from, :ip_to => ip_to, :country => country, :video => video)
+  @ip = Ip.new
+  @ip.ip_from = params[:ip_from]
+  @ip.ip_to = params[:ip_to]
+  @ip.country = params[:country]
+  @ip.video = params[:video][:tempfile].path
+  @ip.save
   redirect '/admin'
 end
 

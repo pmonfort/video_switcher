@@ -1,4 +1,4 @@
-%form{:action => @actionUrl, :method => "post"}
+%form{:action => @actionUrl, :method => "post", :enctype => "multipart/form-data"}
   %fieldset
     %table
       %tbody
@@ -17,6 +17,6 @@
         %tr
           %td
             %label{:for => "video"} Video:
-            %input{:type => "text", :name => "video", :class => "text", :value => @ip[:video]}
+            %input{:type => "file", :name => "video", :class => "text", :value => @ip[:video]}
 
     %input{:type => "submit", :value => "Send", :class => "button"}
