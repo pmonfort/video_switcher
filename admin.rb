@@ -17,45 +17,52 @@ end
 
 get '/admin' do
   protected!
-  @ips = Ip.all
-  haml :'admin/ips/index'
+  @countries = Country.all
+  haml :'admin/countries/index'
 end
 
-get '/admin/ips/add' do
+get '/admin/countries/add' do
   protected!
-  @ip = Ip.new
-  @actionUrl = "/admin/ips/add"
-  haml :'admin/ips/add'
+  @country = Country.new
+  @actionUrl = "/admin/countries/add"
+  haml :'admin/countries/add'
 end
 
-post '/admin/ips/add' do
+post '/admin/countries/add' do
   protected!
-  @ip = Ip.new
-  @ip.ip_from = params[:ip_from]
-  @ip.ip_to = params[:ip_to]
-  @ip.country = params[:country]
-  @ip.video = params[:video][:tempfile].path
-  @ip.save
+  @country = Country.new
+  @country.ip_from = params[:ip_from]
+  @country.ip_to = params[:ip_to]
+  @country.country = params[:country]
+  @country.video = params[:video][:tempfile].path
+  @country.save
   redirect '/admin'
 end
 
-get '/admin/ips/:id' do
+get '/admin/countries/:id' do
   protected!
-  @ip = Ip[:id => params[:id]]
-  if @ip.nil?
+  @country = Country[:id => params[:id]]
+  if @country.nil?
     haml :'404'
   end
-  @actionUrl = "/admin/ips/" + @ip[:id].to_s
-  haml :'admin/ips/ip'
+  @actionUrl = "/admin/countries/" + @country[:id].to_s
+  haml :'admin/countries/country'
 end
 
-post '/admin/ips/:id' do
+post '/admin/countries/:id' do
   protected!
-  ip_from = params[:ip_from]
-  ip_to = params[:ip_to]
-  country = params[:country]
-  video = params[:video]
-  @ip = Ip[:id => params[:id]]
-  @ip.update(:ip_from => ip_from, :ip_to => ip_to, :country => country, :video => video)
+  @country = Country[:id => params[:id]]
+  @country.ip_from = params[:ip_from]
+  @country.ip_to = params[:ip_to]
+  @country.country = params[:country]
+  @country.video_original = params[:video][:tempfile].path unless params[:video].nil?
+  @country.save
+  redirect '/admin'
+end
+
+get '/admin/countries/:id/delete' do
+  protected!
+  @country = Country[:id => params[:id]]
+  @country.destroy
   redirect '/admin'
 end

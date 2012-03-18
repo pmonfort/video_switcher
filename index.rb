@@ -5,7 +5,7 @@ require 'sinatra'
 require 'sinatra/content_for'
 
 #files
-require "./models/ip"
+require "./models/country"
 require "./admin"
 
 get '/' do
