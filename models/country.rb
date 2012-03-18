@@ -16,6 +16,7 @@ DB.create_table? :countries do
   String :video_original
   String :video_mp4
   String :video_ogg
+  String :video_thumbnail
 end
 
 class Country < Sequel::Model
@@ -24,6 +25,8 @@ class Country < Sequel::Model
       process_video(video_path)
     rescue => e
       #TODO
+
+      require "ruby-debug"; debugger; ""
     end
   end
 
@@ -35,23 +38,27 @@ class Country < Sequel::Model
 
   def process_video(input_path)
     return unless check_fs_permission(input_path)
-
-    base_path = VIDEO_BASE_PATH + self.ip_from + "%s"
-    mp4_path = base_path % ".mp4"
-    ogg_path = base_path % ".ogg"
-
-    command_str = "ffmpeg -i #{input_path} -target ntsc-vcd %s"
-    mp4_command = command_str % mp4_path
-    ogg_command = command_str % ogg_path
-
-    out = system(mp4_command)
-    raise "FFMPEG unknowkn error" unless out
-    system(ogg_command)
-
-    self.video_mp4 = mp4_path
-    self.video_ogg = ogg_path
-
+    convert_video(input_path, ".mp4")
+    convert_video(input_path, ".ogg")
     copy_original_file(input_path)
+    create_video_thumbnail(input_path)
+  end
+
+  def convert_video(input_path, extension)
+    output_path = VIDEO_BASE_PATH + self.ip_from + extension
+    command = "ffmpeg -i %s -target ntsc-vcd %s" % [input_path, output_path]
+    output = system(command)
+
+    raise "FFMPEG unknowkn error" unless output
+
+    case extension
+      when ".mp4"
+        self.video_mp4 = output_path
+      when ".ogg"
+        self.video_ogg = output_path
+      else
+        raise "Invalid extension error"
+    end
   end
 
   def copy_original_file(input_path)
@@ -61,5 +68,13 @@ class Country < Sequel::Model
     output.write(input.read)
     output.close
     self.video_original = path
+  end
+
+  def create_video_thumbnail(input_path, resolution = "64x64", frame = "10")
+    output_path = VIDEO_BASE_PATH + self.ip_from + ".jpg"
+    command = "ffmpeg -i %s -vcodec mjpeg -vframes 10 -an -f rawvideo -s 64x64 %s" % [input_path, output_path]
+    output = system(command)
+    raise "FFMPEG creating thumbnail error" unless output
+    self.video_thumbnail = output_path
   end
 end
