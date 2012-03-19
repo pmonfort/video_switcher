@@ -2,9 +2,8 @@
   %link{ :href=>"http://vjs.zencdn.net/c/video-js.css", :rel => "stylesheet" }
   %script{ :src => "http://vjs.zencdn.net/c/video.js" }
 
-
-%video{ :src => 'videos/file-332722753.ogg', :controls => "" }
-%video{ :src => 'videos/21741682_mp4_h264_aac.mp4', :controls => "" }
-
-%video{ :id => "video", :class => "video-js vjs-default-skin", :controls => "", :preload => "auto", :poster => "test.png", :data => {:setup => "{}"}, :width => "640",:height => "264" }
-  %source{ :src => "videos/21741682_mp4_h264_aac.mp4", :type=> "video/mp4" }
+- if @video
+  %video{ :id => "video", :class => "video-js vjs-default-skin", :controls => "", :preload => "auto", :poster => "#{@base_url + @video.video_thumbnail}", :data => {:setup => "{}"}, :width => "640",:height => "264" }
+    %source{ :src => "#{@base_url + @video.video_mp4}", :type=> 'video/mp4; codecs="avc1.4D401E, mp4a.40.2"'}
+    %source{ :src => "#{@base_url + @video.video_ogg}", :type=> 'video/ogg; codecs="theora, vorbis"' }
+    %source{ :src => "#{@base_url + @video.video_webm}", :type=> 'video/webm; codecs="vp8.0, vorbis"' }

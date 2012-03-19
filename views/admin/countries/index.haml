@@ -20,7 +20,7 @@
         %td
           = country[:country]
         %td
-          = country[:video]
+          %img{:src => country[:video_thumbnail]}
         %td
           %a{:href => "/admin/countries/#{country[:id]}"} Editar
         %td

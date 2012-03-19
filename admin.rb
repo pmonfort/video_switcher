@@ -55,7 +55,7 @@ post '/admin/countries/:id' do
   @country.ip_from = params[:ip_from]
   @country.ip_to = params[:ip_to]
   @country.country = params[:country]
-  @country.video_original = params[:video][:tempfile].path unless params[:video].nil?
+  @country.video = params[:video][:tempfile].path unless params[:video].nil?
   @country.save
   redirect '/admin'
 end
