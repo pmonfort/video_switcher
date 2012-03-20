@@ -1,8 +1,4 @@
-require "rubygems"
 require "sequel"
-require 'sinatra'
-require 'sinatra/content_for'
-require 'sinatra/config_file'
 
 config_file 'settings.yml'
 
