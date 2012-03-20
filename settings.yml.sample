@@ -1,0 +1,18 @@
+---
+development: &defaults
+  db:
+    adapter: "mysql2"
+    host: "localhost"
+    username: "german"
+    password: "2921"
+    db_name: "qr"
+
+test:
+  <<: *defaults
+  db:
+    db_name: "qr_test"
+
+production:
+  <<: *defaults
+  db:
+    db_name: "qr_prod"

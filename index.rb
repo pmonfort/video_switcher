@@ -1,10 +1,4 @@
-#gems
-require "rubygems"
-require "sequel"
-require 'sinatra'
-require 'sinatra/content_for'
-
-#files
+require 'init.rb'
 require "./models/country"
 require "./admin"
 
