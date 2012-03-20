@@ -1,20 +1,20 @@
 Requirements
 ============
 
-- MySql server
-- Either Apache or nginx for production mode
+* MySql server
+* Either Apache or nginx for production mode
 
 Installation Notes
 ==================
 
-- Install ruby version 1.9.2
-- Install rubygems
-- Install some basic gems:
+* Install ruby version 1.9.2
+* Install rubygems
+* Install some basic gems:
 
     gem install bundler
     gem install passenger
 
-- Install the apache2 module:
+* Install the apache2 module:
 
     passenger-install-apache2-module
 
@@ -22,14 +22,14 @@ Installation Notes
 
     passenger-install-nginx-module
 
-- Follow *passenger* directions, you may need to install additional system libraries,
+* Follow *passenger* directions, you may need to install additional system libraries,
   the installer will let you know about that
 
-- Create a database for your app:
+* Create a database for your app:
 
     mysqladmin create my_db
 
-- Uncompress your application file to some directory and go there:
+* Uncompress your application file to some directory and go there:
 
     cd /path/to/app
 
@@ -37,17 +37,17 @@ Installation Notes
 
     rm .rvmrc
 
-- Copy the sample settings file:
+* Copy the sample settings file:
 
     cp settings.yml.sample settings.yml
 
   And edit the new file with your database creadentials including the databse name that you created earlier
 
-- Run bunlder:
+* Run bunlder:
 
     bundle install
 
-- Configure Apache (similar for nginx) by creating a virtual host pointing to the *public* directory of your app:
+* Configure Apache (similar for nginx) by creating a virtual host pointing to the *public* directory of your app:
   in apache httpd.conf or sites-enabled file:
 
     VirtualHost *:80
@@ -59,7 +59,7 @@ Installation Notes
       /Directory
     /VirtualHost
 
-- You can also test your application with rack only, on port 4567 for example, if you want:
+* You can also test your application with rack only, on port 4567 for example, if you want:
 
     cd /path/to/app
     export RACK_ENV=production
