@@ -39,14 +39,16 @@ Installation Notes
 - Configure Apache (similar for nginx) by creating a virtual host pointing to the *public* directory of your app:
   in apache httpd.conf or sites-enabled file:
 
-    <VirtualHost *:80>
-      ServerName www.yourapplication.com
-      DocumentRoot /path/to/app/public
-      <Directory /path/to/app/public>
-        Allow from all
-        Options -MultiViews
-      </Directory>
-    </VirtualHost>
+    <pre><code>
+      <VirtualHost *:80>
+        ServerName www.yourapplication.com
+        DocumentRoot /path/to/app/public
+        <Directory /path/to/app/public>
+          Allow from all
+          Options -MultiViews
+        </Directory>
+      </VirtualHost>
+    </code></pre>
 
 - You can also test your application with rack only, on port 4567 for example, if you want:
     $ cd /path/to/app
