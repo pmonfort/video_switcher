@@ -25,7 +25,6 @@ end
 get '/admin/countries/add' do
   protected!
   @country = Country.new
-  @errors = ['lalala', 'lololo', 'ratataaa!']
   @actionUrl = "/admin/countries/add"
   haml :'admin/countries/add'
 end
