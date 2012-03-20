@@ -18,12 +18,14 @@ end
 get '/admin' do
   protected!
   @countries = Country.all
+  @base_url = Country::VIDEO_BASE_URL
   haml :'admin/countries/index'
 end
 
 get '/admin/countries/add' do
   protected!
   @country = Country.new
+  @errors = ['lalala', 'lololo', 'ratataaa!']
   @actionUrl = "/admin/countries/add"
   haml :'admin/countries/add'
 end
@@ -34,9 +36,15 @@ post '/admin/countries/add' do
   @country.ip_from = params[:ip_from]
   @country.ip_to = params[:ip_to]
   @country.country = params[:country]
-  @country.video = params[:video][:tempfile].path
-  @country.save
-  redirect '/admin'
+  begin
+    raise 'Invalid model' unless @country.valid?
+    @country.video = params[:video][:tempfile].path
+    @country.save
+    redirect '/admin'
+  rescue => e
+    @errors = @country.errors
+    haml :'admin/countries/add'
+  end
 end
 
 get '/admin/countries/:id' do
@@ -45,6 +53,7 @@ get '/admin/countries/:id' do
   if @country.nil?
     haml :'404'
   end
+  @base_url = Country::VIDEO_BASE_URL
   @actionUrl = "/admin/countries/" + @country[:id].to_s
   haml :'admin/countries/country'
 end
@@ -55,9 +64,15 @@ post '/admin/countries/:id' do
   @country.ip_from = params[:ip_from]
   @country.ip_to = params[:ip_to]
   @country.country = params[:country]
-  @country.video = params[:video][:tempfile].path unless params[:video].nil?
-  @country.save
-  redirect '/admin'
+  begin
+    raise 'Invalid model' unless @country.valid?
+    @country.video = params[:video][:tempfile].path unless params[:video].nil?
+    @country.save
+    redirect '/admin'
+  rescue => e
+    @errors = @country.errors
+    haml :'admin/countries/add'
+  end
 end
 
 get '/admin/countries/:id/delete' do

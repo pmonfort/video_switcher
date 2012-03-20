@@ -1,0 +1,18 @@
+h1{
+	margin-top:5px;
+}
+label{
+  width: 200px;
+}
+div.error{
+  border: 1px solid red;
+  color: red;
+  padding: 5px;
+}
+div.error span{
+  clear: both;
+  float: left;
+}
+div.clear{
+    clear:both
+}
