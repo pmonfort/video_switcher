@@ -2,27 +2,10 @@ require 'rubygems'
 require 'sequel'
 require 'digest'
 
-DBUSER = 'root'
-DBPASSWORD = '3578'
-
-DB = Sequel.connect(:adapter => 'mysql2', :user => DBUSER, :host => 'localhost', :database => 'qr',:password => DBPASSWORD)
-
-# create an items table
-DB.create_table? :countries do
-  primary_key :id
-  String :ip_from
-  String :ip_to
-  String :country
-  String :video_original
-  String :video_mp4
-  String :video_ogg
-  String :video_webm
-  String :video_thumbnail
-end
-
 class Country < Sequel::Model
-  VIDEO_BASE_PATH = "public/videos/"
-  VIDEO_BASE_URL = "videos/"
+  VIDEO_BASE_PATH = 'public/videos/'
+  VIDEO_BASE_URL = 'videos/'
+
   plugin :validation_helpers
   def validate
     super
@@ -39,7 +22,6 @@ class Country < Sequel::Model
       self.video_mp4 = ''
       self.video_original = ''
       self.video_thumbnail = ''
-      require "ruby-debug"; debugger; ""
     end
   end
 

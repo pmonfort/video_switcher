@@ -1,4 +1,5 @@
 # Can ignore specific files
+settings.yml
 
 # Use wildcards as well
 .*.sw*
