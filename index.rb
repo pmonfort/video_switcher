@@ -36,10 +36,7 @@ module VideoSwitcher
 
     get '/' do
       #ip integer id, string ip_from, string ip_to, string country, string video
-      #ip = DB["SELECT * FROM ip WHERE ip_from <= ? AND ip_to >= ? LIMIT 1", request.ip, request.ip]
-      #ip = DB["SELECT * FROM ip WHERE ip_from <= ? AND ip_to >= ? LIMIT 1", '186.48.5.106', '186.48.5.106']
-      #@video = "assets/" + ip.map(:video).first
-      @video = Country.filter('ip_from <= ? AND ip_to >= ?', '127.0.0.1', '127.0.0.1').first
+      @video = Country.filter('ip_from <= ? AND ip_to >= ?', request.ip, request.ip).first
       @base_url = Country::VIDEO_BASE_URL
       haml :index
     end
@@ -85,9 +82,9 @@ module VideoSwitcher
       @country.ip_from = params[:ip_from]
       @country.ip_to = params[:ip_to]
       @country.country = params[:country]
+      @country.video = params[:video][:tempfile].path if params[:video]
       begin
         raise 'Invalid model' unless @country.valid?
-        @country.video = params[:video][:tempfile].path
         @country.save
         redirect '/admin'
       rescue => e
@@ -113,9 +110,9 @@ module VideoSwitcher
       @country.ip_from = params[:ip_from]
       @country.ip_to = params[:ip_to]
       @country.country = params[:country]
+      @country.video = params[:video][:tempfile].path unless params[:video].nil?
       begin
         raise 'Invalid model' unless @country.valid?
-        @country.video = params[:video][:tempfile].path unless params[:video].nil?
         @country.save
         redirect '/admin'
       rescue => e

@@ -1,6 +1,5 @@
 source 'http://rubygems.org'
 
-gem 'debprado-rvideo'
 gem 'haml'
 gem 'mysql2'
 

@@ -4,7 +4,6 @@ GEM
     archive-tar-minitar (0.5.2)
     backports (2.3.0)
     columnize (0.3.6)
-    debprado-rvideo (0.9.6)
     eventmachine (0.12.10)
     haml (3.1.4)
     linecache19 (0.5.12)
@@ -43,7 +42,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  debprado-rvideo
   haml
   mysql2
   ruby-debug19

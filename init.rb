@@ -5,7 +5,7 @@ config_file 'settings.yml'
 configure do
   DB = Sequel.connect(
     :adapter  => settings.db[:adapter],
-    :user     => settings.db[:user],
+    :user     => settings.db[:username],
     :host     => settings.db[:host],
     :database => settings.db[:db_name],
     :password => settings.db[:password]
