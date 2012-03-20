@@ -3,16 +3,16 @@ development: &defaults
   db:
     adapter: "mysql2"
     host: "localhost"
-    username: "german"
-    password: "2921"
-    db_name: "qr"
+    username: "root"
+    password: ""
+    db_name: "db_name_dev"
 
 test:
   <<: *defaults
   db:
-    db_name: "qr_test"
+    db_name: "db_name_test"
 
 production:
   <<: *defaults
   db:
-    db_name: "qr_prod"
+    db_name: "db_name_prod"
