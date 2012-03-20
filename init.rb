@@ -2,7 +2,6 @@ require "sequel"
 
 config_file 'settings.yml'
 
-require "ruby-debug"; debugger; ""
 configure do
   DB = Sequel.connect(
     :adapter  => settings.db[:adapter],

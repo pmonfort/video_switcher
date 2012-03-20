@@ -5,10 +5,20 @@ require 'digest'
 class Country < Sequel::Model
   VIDEO_BASE_PATH = 'public/videos/'
   VIDEO_BASE_URL = 'videos/'
-
   plugin :validation_helpers
   def validate
     super
+
+    Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(:presence=>{:message=>'cannot be empty'})
+    conflicted_video = Country.filter('ip_from <= ? AND ip_to >= ?', ip_from, ip_from).first
+    conflicted_video = Country.filter('ip_from <= ? AND ip_to >= ?', ip_to, ip_to).first unless conflicted_video
+
+    if conflicted_video && conflicted_video.id != self.id
+      errors.add(:conflict, 'the ip rank you have input is already taken, please delete previous rank or select a new one.')
+    end
+
+    errors.add(:video, 'cannot be empty') unless video_original
+
     validates_presence [:ip_from, :ip_to, :country]
     validates_unique [:ip_from, :ip_to]
   end
