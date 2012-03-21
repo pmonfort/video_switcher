@@ -15,7 +15,7 @@ module VideoSwitcher
     configure do
       DB = Sequel.connect(
         :adapter  => settings.db[:adapter],
-        :user     => settings.db[:user],
+        :user     => settings.db[:username],
         :host     => settings.db[:host],
         :database => settings.db[:db_name],
         :password => settings.db[:password]
@@ -37,14 +37,17 @@ module VideoSwitcher
     get '/' do
       #ip integer id, string ip_from, string ip_to, string country, string video
       @video = Country.filter('ip_from <= ? AND ip_to >= ?', request.ip, request.ip).first
+      if ! @video
+        @video = Country[:country => settings.default_video_name]
+      end
       @base_url = Country::VIDEO_BASE_URL
       haml :index
     end
   end
 
   class Admin < Sinatra::Base
-    USER = "admin"
-    PASSWORD = "admin"
+    register Sinatra::ConfigFile
+    config_file 'settings.yml'
 
     helpers Sinatra::ContentFor
 
@@ -58,7 +61,7 @@ module VideoSwitcher
 
       def authorized?
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == [USER, PASSWORD]
+        @auth.provided? && @auth.basic? && @auth.credentials && @auth.credentials == [settings.admin[:username], settings.admin[:password]]
       end
     end
 

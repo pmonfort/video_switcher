@@ -6,6 +6,10 @@ development: &defaults
     username: "root"
     password: ""
     db_name: "db_name_dev"
+  default_video_name: "Default"
+  admin:
+    username: "admin"
+    password: "admin"
 
 test:
   <<: *defaults
