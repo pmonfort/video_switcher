@@ -4,6 +4,7 @@ require "sequel"
 require 'sinatra/base'
 require 'sinatra/content_for'
 require 'sinatra/config_file'
+require 'geokit'
 
 module VideoSwitcher
   class Public < Sinatra::Base
@@ -20,12 +21,11 @@ module VideoSwitcher
         :database => settings.db[:db_name],
         :password => settings.db[:password]
       )
-
-      DB.create_table? :countries do
+      DB.create_table? :videos do
         primary_key :id
-        String :ip_from
-        String :ip_to
-        String :country
+        String :title
+        String :country_code
+        Boolean :default
         String :video_original
         String :video_mp4
         String :video_ogg
@@ -35,12 +35,13 @@ module VideoSwitcher
     end
 
     get '/' do
-      #ip integer id, string ip_from, string ip_to, string country, string video
-      @video = Country.filter('ip_from <= ? AND ip_to >= ?', request.ip, request.ip).first
-      if ! @video
-        @video = Country[:country => settings.default_video_name]
-      end
-      @base_url = Country::VIDEO_BASE_URL
+      ip = "12.215.42.19"
+      #location = Geokit::Geocoders::IpGeocoder.geocode(request.ip)
+      location = Geokit::Geocoders::IpGeocoder.geocode(ip)
+      @video = Video.filter(:country_code => location.country_code).first unless !location.country_code
+      @video = Video.filter(:default => true).first unless @video
+
+      @base_url = Video::VIDEO_BASE_URL
       haml :index
     end
   end
@@ -67,70 +68,83 @@ module VideoSwitcher
 
     get '/' do
       protected!
-      @countries = Country.all
-      @base_url = Country::VIDEO_BASE_URL
-      haml :'admin/countries/index'
+      @videos = Video.all
+      @base_url = Video::VIDEO_BASE_URL
+      haml :'admin/videos/index'
     end
 
-    get '/countries/add' do
+    # ---- Videos ----
+
+    get '/videos' do
       protected!
-      @country = Country.new
-      @actionUrl = "/admin/countries/add"
-      haml :'admin/countries/add'
+      @videos = Video.all
+      @base_url = Video::VIDEO_BASE_URL
+      haml :'admin/videos/index'
     end
 
-    post '/countries/add' do
+    get '/videos/add' do
       protected!
-      @country = Country.new
-      @country.ip_from = params[:ip_from]
-      @country.ip_to = params[:ip_to]
-      @country.country = params[:country]
-      @country.video = params[:video][:tempfile].path if params[:video]
+      @video = Video.new
+      @actionUrl = "/admin/videos/add"
+      haml :'admin/videos/add'
+    end
+
+    post '/videos/add' do
+      protected!
+      @video = Video.new
+      @video.title = params[:title]
+      @video.country_code = params[:country_code]
+      @video.default = params[:default]
       begin
-        raise 'Invalid model' unless @country.valid?
-        @country.save
+        raise 'Invalid model' unless @video.valid?
+        if !params[:video]
+          @video.errors.add(:video, 'cannot be empty')
+          raise 'Invalid video'
+        end
+        @video.video = params[:video][:tempfile].path
+        @video.save
         redirect '/admin'
       rescue => e
-        @errors = @country.errors
-        haml :'admin/countries/add'
+        @errors = @video.errors
+        haml :'admin/videos/add'
       end
     end
 
-    get '/countries/:id' do
+    get '/videos/:id' do
       protected!
-      @country = Country[:id => params[:id]]
-      if @country.nil?
+      @video = Video[:id => params[:id]]
+      if @video.nil?
         haml :'404'
       end
-      @base_url = Country::VIDEO_BASE_URL
-      @actionUrl = "/admin/countries/" + @country[:id].to_s
-      haml :'admin/countries/country'
+      @base_url = Video::VIDEO_BASE_URL
+      @actionUrl = "/admin/videos/" + @video[:id].to_s
+      haml :'admin/videos/edit'
     end
 
-    post '/countries/:id' do
+    post '/videos/:id' do
       protected!
-      @country = Country[:id => params[:id]]
-      @country.ip_from = params[:ip_from]
-      @country.ip_to = params[:ip_to]
-      @country.country = params[:country]
-      @country.video = params[:video][:tempfile].path unless params[:video].nil?
+      @video = Video[:id => params[:id]]
+      @video.title = params[:title]
+      @video.country_code = params[:country_code]
+      @video.default = params[:default]
       begin
-        raise 'Invalid model' unless @country.valid?
-        @country.save
+        raise 'Invalid model' unless @video.valid?
+        @video.video = params[:video][:tempfile].path if params[:video]
+        @video.save
         redirect '/admin'
       rescue => e
-        @errors = @country.errors
-        haml :'admin/countries/add'
+        @errors = @video.errors
+        haml :'admin/videos/add'
       end
     end
 
-    get '/countries/:id/delete' do
+    get '/videos/:id/delete' do
       protected!
-      @country = Country[:id => params[:id]]
-      @country.destroy
+      @video = Video[:id => params[:id]]
+      @video.destroy
       redirect '/admin'
     end
   end
 
-  require_relative 'models/country'
+  require_relative 'models/video'
 end

@@ -1,0 +1,21 @@
+%form{:action => @actionUrl, :method => "post", :enctype => "multipart/form-data"}
+  %fieldset
+    %table
+      %tbody
+        %tr
+          %td
+            %label{:for => "title"} Titulo:
+            %input{:type => "text", :name => "title", :class => "text", :value => @video[:title]}
+        %tr
+          %td
+            %label{:for => "country_code"} Country code:
+            %input{:type => "text", :name => "country_code", :class => "text", :value => @video[:country_code]}
+        %tr
+          %td
+            %label{:for => "video"} Video:
+            %input{:type => "file", :name => "video", :class => "text"}
+        %tr
+          %td
+            %label{:for => "default"} Default:
+            %input{:type => "checkbox", :name => "default", :class => "text", :checked => @video[:default]}
+    %input{:type => "submit", :value => "Send", :class => "button"}

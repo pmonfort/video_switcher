@@ -11,11 +11,9 @@ configure do
     :password => settings.db[:password]
   )
 
-  DB.create_table? :countries do
+  DB.create_table? :video do
     primary_key :id
-    String :ip_from
-    String :ip_to
-    String :country
+    String :title
     String :video_original
     String :video_mp4
     String :video_ogg
@@ -23,6 +21,14 @@ configure do
     String :video_thumbnail
   end
 
+  DB.create_table? :region do
+    primary_key :id
+    String :country_name
+    String :country_code
+    Integer :start_ip
+    Integer :end_ip
+    Integer :video_id
+  end
 end
 
 # require models

@@ -1,0 +1,30 @@
+%h1 Listado de videos
+%table
+  %thead
+    %tr
+      %td
+        Titulo
+      %td
+        Country code
+      %td
+        Video
+      %td
+        Default
+  %tbody
+    - @videos.each do |video|
+      %tr
+        %td
+          = video[:title]
+        %td
+          = video[:country_code]
+        %td
+          %img{:src => video[:video_thumbnail]}
+        %td
+          = video[:default]
+        %td
+          %a{:href => "/admin/videos/#{video[:id]}"} Editar
+        %td
+          %a{:href => "/admin/videos/#{video[:id]}/delete"} Borrar
+
+%a{:href => "/admin/videos/add"} Agregar
+%a{:href => "/"} Frontend

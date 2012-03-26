@@ -2,7 +2,9 @@ require 'rubygems'
 require 'sequel'
 require 'digest'
 
-class Country < Sequel::Model
+class Video < Sequel::Model
+  one_to_many :region
+
   VIDEO_BASE_PATH = 'public/videos/'
   VIDEO_BASE_URL = 'videos/'
   plugin :validation_helpers
@@ -10,17 +12,19 @@ class Country < Sequel::Model
     super
 
     Sequel::Plugins::ValidationHelpers::DEFAULT_OPTIONS.merge!(:presence=>{:message=>'cannot be empty'})
-    conflicted_video = Country.filter('ip_from <= ? AND ip_to >= ?', ip_from, ip_from).first
-    conflicted_video = Country.filter('ip_from <= ? AND ip_to >= ?', ip_to, ip_to).first unless conflicted_video
 
-    if conflicted_video && conflicted_video.id != self.id
-      errors.add(:conflict, 'the ip rank you have input is already taken, please delete previous rank or select a new one.')
+    if self.default
+      validates_unique [:title]
+      validates_presence [:title]
+      if self.country_code
+        validates_unique [:country_code]
+      end
+    else
+      validates_unique [:title]
+      validates_unique [:country_code]
+      validates_presence [:title, :country_code]
     end
 
-    errors.add(:video, 'cannot be empty') unless video_original
-
-    validates_presence [:ip_from, :ip_to, :country]
-    validates_unique [:ip_from, :ip_to]
   end
 
   def video=(video_path)
@@ -28,10 +32,8 @@ class Country < Sequel::Model
       process_video(video_path)
     rescue => e
       #TODO
-      self.video_ogg = ''
-      self.video_mp4 = ''
-      self.video_original = ''
-      self.video_thumbnail = ''
+      self.errors.add(:video, 'no valid')
+      raise "Invalid Video"
     end
   end
 
@@ -42,9 +44,10 @@ class Country < Sequel::Model
   end
 
   def process_video(input_path)
-    return unless check_fs_permission(input_path)
 
-    file_name = Digest::MD5.hexdigest(Time.now.to_s + self.ip_from)
+    raise "Permission exceptions" unless check_fs_permission(input_path)
+
+    file_name = Digest::MD5.hexdigest(Time.now.to_s + self.country_code)
     copy_original_file(file_name, input_path)
     convert_video(file_name, ".mp4")
     convert_video(file_name, ".ogg")

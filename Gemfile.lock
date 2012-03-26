@@ -2,12 +2,15 @@ GEM
   remote: http://rubygems.org/
   specs:
     archive-tar-minitar (0.5.2)
-    backports (2.3.0)
+    backports (2.5.0)
     columnize (0.3.6)
     eventmachine (0.12.10)
+    geokit (1.6.5)
+      multi_json
     haml (3.1.4)
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
+    multi_json (1.1.0)
     mysql2 (0.3.11)
     rack (1.4.1)
     rack-protection (1.2.0)
@@ -42,6 +45,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  geokit
   haml
   mysql2
   ruby-debug19
