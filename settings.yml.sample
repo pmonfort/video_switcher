@@ -10,6 +10,9 @@ development: &defaults
   admin:
     username: "admin"
     password: "admin"
+  video:
+    height: "264"
+    width: "640"
 
 test:
   <<: *defaults

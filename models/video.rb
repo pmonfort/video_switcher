@@ -39,14 +39,6 @@ class Video < Sequel::Model
     delete_file(self.video_thumbnail)
   end
 
-  def delete_file(file_path)
-    if File.exist?(VIDEO_BASE_PATH + file_path)
-      return File.delete(VIDEO_BASE_PATH + file_path)
-    else
-      return false
-    end
-  end
-
   def video=(video_path)
     begin
       delete_related_files if self.id
@@ -60,14 +52,20 @@ class Video < Sequel::Model
 
   private
 
+  def delete_file(file_path)
+    if File.exist?(VIDEO_BASE_PATH + file_path)
+      return File.delete(VIDEO_BASE_PATH + file_path)
+    else
+      return false
+    end
+  end
+
   def check_fs_permission(path)
     File.readable?(path) && File.writable?(VIDEO_BASE_PATH)
   end
 
   def process_video(input_path)
-
     raise "Permission exceptions" unless check_fs_permission(input_path)
-
     file_name = Digest::MD5.hexdigest(Time.now.to_s + self.country_code)
     copy_original_file(file_name, input_path)
     convert_video(file_name, ".mp4")
@@ -105,9 +103,9 @@ class Video < Sequel::Model
     raise "FFMPEG unknowkn error" unless output
   end
 
-  def create_video_thumbnail(file_name, resolution = "64x64", frame = "10")
+  def create_video_thumbnail(file_name, frame = "10")
     output_path = file_name + ".jpg"
-    command = "ffmpeg -i %s -vcodec mjpeg -vframes 10 -an -f rawvideo -s 64x64 %s" % [VIDEO_BASE_PATH + self.video_original, VIDEO_BASE_PATH + output_path]
+    command = "ffmpeg -i %s -vcodec mjpeg -vframes 10 -an -f rawvideo %s" % [VIDEO_BASE_PATH + self.video_original, VIDEO_BASE_PATH + output_path]
     output = `#{command}`
     raise "FFMPEG creating thumbnail error" unless output
     self.video_thumbnail = output_path

@@ -1,9 +1,9 @@
 require "rubygems"
-require 'haml'
 require "sequel"
+require 'haml'
 require 'sinatra/base'
-require 'sinatra/content_for'
 require 'sinatra/config_file'
+require 'sinatra/content_for'
 require 'geokit'
 
 module VideoSwitcher
@@ -40,7 +40,8 @@ module VideoSwitcher
       location = Geokit::Geocoders::IpGeocoder.geocode(ip)
       @video = Video.filter(:country_code => location.country_code).first unless !location.country_code
       @video = Video.filter(:default => true).first unless @video
-
+      @height = settings.video[:height]
+      @width = settings.video[:width]
       @base_url = Video::VIDEO_BASE_URL
       haml :index
     end
@@ -105,6 +106,8 @@ module VideoSwitcher
         @video.save
         redirect '/admin'
       rescue => e
+
+        require "ruby-debug"; debugger; ""
         @errors = @video.errors
         haml :'admin/videos/add'
       end
