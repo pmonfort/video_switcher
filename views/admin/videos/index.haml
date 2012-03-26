@@ -18,7 +18,7 @@
         %td
           = video[:country_code]
         %td
-          %img{:src => video[:video_thumbnail]}
+          %img{:src => (@base_url + video[:video_thumbnail])}
         %td
           = video[:default]
         %td

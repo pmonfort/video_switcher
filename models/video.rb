@@ -24,11 +24,32 @@ class Video < Sequel::Model
       validates_unique [:country_code]
       validates_presence [:title, :country_code]
     end
+  end
 
+  def destroy
+    delete_related_files
+    super
+  end
+
+  def delete_related_files
+    delete_file(self.video_mp4)
+    delete_file(self.video_ogg)
+    delete_file(self.video_webm)
+    delete_file(self.video_original)
+    delete_file(self.video_thumbnail)
+  end
+
+  def delete_file(file_path)
+    if File.exist?(VIDEO_BASE_PATH + file_path)
+      return File.delete(VIDEO_BASE_PATH + file_path)
+    else
+      return false
+    end
   end
 
   def video=(video_path)
     begin
+      delete_related_files if self.id
       process_video(video_path)
     rescue => e
       #TODO
@@ -89,6 +110,6 @@ class Video < Sequel::Model
     command = "ffmpeg -i %s -vcodec mjpeg -vframes 10 -an -f rawvideo -s 64x64 %s" % [VIDEO_BASE_PATH + self.video_original, VIDEO_BASE_PATH + output_path]
     output = `#{command}`
     raise "FFMPEG creating thumbnail error" unless output
-    self.video_thumbnail = VIDEO_BASE_URL + output_path
+    self.video_thumbnail = output_path
   end
 end
