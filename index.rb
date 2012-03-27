@@ -35,9 +35,7 @@ module VideoSwitcher
     end
 
     get '/' do
-      ip = "12.215.42.19"
-      #location = Geokit::Geocoders::IpGeocoder.geocode(request.ip)
-      location = Geokit::Geocoders::IpGeocoder.geocode(ip)
+      location = Geokit::Geocoders::IpGeocoder.geocode(request.ip)
       @video = Video.filter(:country_code => location.country_code).first unless !location.country_code
       @video = Video.filter(:default => true).first unless @video
       @height = settings.video[:height]
